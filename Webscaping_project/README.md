@@ -3,7 +3,7 @@
 
 ## Description
 
-I used Trip Advisor for my scraping project. I searched hotels in Cape Town and scraped Hotel Names, Ratings and Reviews from each hotel. I used Scrapy to write the spider to crawl the trip advisor website. This project was purely acedemic to  understand and practice scraping.
+Using [Trip Advisor](https://www.tripadvisor.co.za/),  I wanted to find information on hotels in Cape Town.  Scraping each of their Ratings and Reviews. I used Scrapy to write the spider to crawl the trip advisor website. This project was purely acedemic to  understand and practice scraping.
 
 ### Scrapy
 
