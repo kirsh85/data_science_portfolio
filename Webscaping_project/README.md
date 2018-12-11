@@ -7,7 +7,7 @@ Using [Trip Advisor](https://www.tripadvisor.co.za/),  I wanted to find informat
 
 ### Scrapy
 
- the [tripadvisor folder](https://github.com/kirsh85/data_science_portfolio/Websraping_project/tripadvisor/) contains the contents of the spider, items and pipelines. 
+ the [tripadvisor folder](https://github.com/kirsh85/data_science_portfolio/tree/master/Webscaping_project/tripadvisor) contains the contents of the spider, items and pipelines. 
 
 ### Data
  The data file produced from the scrapy scripts can be found at: "reviews.csv". 
