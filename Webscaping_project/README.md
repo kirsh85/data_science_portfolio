@@ -12,7 +12,7 @@ I used Trip Advisor for my scraping project. I searched hotels in Cape Town and 
 
 ### Shiny App
 
- TripAdvisorViz: an RShiny app showing some analysis from the data that was scraped. The results of the app is at:\  
+ TripAdvisorViz: an RShiny app showing some analysis from the data that was scraped. The results of the app is at:   
  https://data-interludes.shinyapps.io/tripadvisorviz/
 
 
