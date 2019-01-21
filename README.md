@@ -5,3 +5,4 @@ More information about me: https://www.linkedin.com/in/kirshnee-bhagwandas-bbb04
 
 
 
+![Screenshot](images/app_preview.png)
