@@ -7,3 +7,5 @@
  TripAdvisorViz: an RShiny app showing some analysis from the data that was scraped. The results of the app is at:     
  https://data-interludes.shinyapps.io/tripadvisorviz
 
+
+![Screenshot](images/app_preview.png)

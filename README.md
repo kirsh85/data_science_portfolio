@@ -4,5 +4,3 @@ This reposiotory is a collection of a few projects I have worked on. The project
 More information about me: https://www.linkedin.com/in/kirshnee-bhagwandas-bbb0464a/
 
 
-
-![Screenshot](images/app_preview.png)
