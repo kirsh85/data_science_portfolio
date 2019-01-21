@@ -5,3 +5,5 @@
  https://flowingdata.com/2015/12/15/a-day-in-the-life-of-americans/  
  I used hypothetical customer's data to show their activities at various banking channels throughout the day.
 
+
+![Screenshot](images/moving_bubbles.png)
