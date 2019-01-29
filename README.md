@@ -4,7 +4,7 @@ This reposiotory is a collection of a few projects I have worked on. The project
 More information about me: https://www.linkedin.com/in/kirshnee-bhagwandas-bbb0464a/
 
 ## projects
-#### [exploring bank visits](https://github.com/kirsh85/data_science_portfolio/tree/master/exploring%20bank%20visits)
+#### [exploring bank visits](https://github.com/kirsh85/data_science_portfolio/tree/master/exploring_bank_visits)
 - interactive RMarkdown storyboard to show customer's visits to the bank tellers.
 - use of ggmap to geocode loctions and mapping in Leaflet.
 - plotly and ggplot packages used for visualization.
@@ -14,6 +14,6 @@ More information about me: https://www.linkedin.com/in/kirshnee-bhagwandas-bbb04
 - using Flowing Dats's tutorial on a Day in the Life of an American.
 
 
-#### [webscraping_tripadvisor](https://github.com/kirsh85/data_science_portfolio/tree/master/webscraping_tripadvisor)
+#### [webscraping_tripadvisor](https://github.com/kirsh85/data_science_portfolio/tree/master/webscaping_tripadvisor)
 - webscraping app to collect Trip Advisor's hotel data and analyse sentiments of reviews.
 - use of Scrapy in python to develop spider, R to clean and perform sentiment analysis together with RShiny for app and visualization.
