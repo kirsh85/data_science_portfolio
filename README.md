@@ -8,3 +8,4 @@ More information about me: https://www.linkedin.com/in/kirshnee-bhagwandas-bbb04
 - interactive RMarkdown storyboard to show customer's visits to the bank tellers.
 - use of ggmap to geocode loctions and mapping in Leaflet.
 - plotly and ggplot packages used for visualization.
+

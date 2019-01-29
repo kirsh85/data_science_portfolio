@@ -9,3 +9,5 @@ Providing an holistic view of bank teller activity and the customers using this 
 
 ## The Data
 In this project, I will explore factors that influence customer's visits to the bank, for instance time of day, location and customer demographic information. I will also look at the transactions they perform, specifically looking at cash deposits and cash withdrawals.  The data has been masked for security reasons. I have used R markdown to create an interactive HTML document which has a storyboard type style. I made used of the library leaflet for the mapping of tellers with geocoded data.
+
+![Screenshot](images/storyboard.png)
