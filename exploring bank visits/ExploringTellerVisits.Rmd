@@ -1,0 +1,270 @@
+---
+title: "Exploring Bank Visits"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    storyboard: true
+    theme: cosmo
+    
+---
+<style type="text/css">
+title {
+  font-size: 50px;
+}
+</style>
+
+
+```{r setup, include=FALSE}
+require(flexdashboard)
+require(dplyr)
+require(ggplot2)
+require(ggthemes)
+require(leaflet)
+require(scales)
+```
+This **exploratory analysis** aims to shed some light on customers making withdrawals and deposits at tellers. 
+
+The **goal** is to be able to uncover reasons for using this particular banking channel 
+which will ultimately assist the bank in migrating their customers to digital channels.
+
+### **Teller Transaction Trends**
+
+```{r fig.width=7,fig.height=3}
+
+telleryearly<-read.csv("data/telleryearlydf..csv", sep=",", stringsAsFactors = FALSE)
+telleryearly$TransactionType<-ifelse(telleryearly$TXN_DESCRIPTION=="CASH_WITHDRAWAL","Cash Withdrawal","All Deposits")
+telleryearlydeposits<-telleryearly %>% group_by(Year,TransactionType) %>% summarise(CountCust= sum(CountCust), CountTrans= sum(CountTrans))
+telleryearlydeposits$Year<-as.character(telleryearlydeposits$Year, format="%Y")
+telleryearlydeposits$Year<-as.Date(telleryearlydeposits$Year, format="%Y")
+telleryearlydeposits$CountTrans<-round(telleryearlydeposits$CountTrans / 1e6,1)
+
+ggplot(data=telleryearlydeposits,aes(x=Year, y=CountTrans)) + geom_area(aes(fill =TransactionType),alpha=.6)+  
+  geom_line(aes(group = TransactionType), position = "stack")+
+  scale_x_date(labels = date_format("%Y")) +
+  theme_light()+ ylab("Number of Transactions (Millions)")+
+  theme(text=element_text(size=9,  family="Helvetica"))+
+  ggtitle("Yearly Trend of Teller Transactions")+
+  scale_fill_manual(values=c("#c9c9c9","#428bca"))
+ 
+
+```
+
+***
+**Number of transactions at Tellers for deposits and withdrawals for the last 3 years**.
+
+- There is a clear **decreasing** trend in the amount of teller transactions over the last few years. 
+
+- With the rise in digital and ATM capabilities, there is a movement towards these channels instead and a decline in teller visits.
+
+- However, there are still a number of transactions still being made at the bank teller.
+  
+In the next few slides, we will look into these teller transactions...
+
+### **When are Customers Transacting at Tellers?**
+
+```{r fig.width=9,fig.height=2}
+tellerdata<-read.csv("data/tellerdata.csv",header = TRUE,stringsAsFactors = TRUE, sep=",")
+tellerdata$TransactionType<-ifelse(tellerdata$TXN_DESCRIPTION=="CASH_WITHDRAWAL","Cash Withdrawal","All Deposits") 
+
+dayofthemonthDeposits<-tellerdata %>% filter(TransactionType=="All Deposits") %>% group_by(DayofMonth) %>% summarise(NumberOfTransactions= sum(CountTrans))
+dayofthemonthDeposits$NumberOfTransactions<-round(dayofthemonthDeposits$NumberOfTransactions / 1e6,1)
+ggplot(data=dayofthemonthDeposits, aes(x=DayofMonth, y=NumberOfTransactions)) +geom_smooth(color="#d9534f")+labs(x= "Day of the Month", y= "Number of Transactions (Mil)") + ggtitle("Deposits")+ theme_light() +theme(text=element_text(size=9,  family="Helvetica"))
+
+
+dayofthemonthwithdrawals<-tellerdata %>% filter(TransactionType=="Cash Withdrawal") %>% group_by(DayofMonth) %>% summarise(NumberOfTransactions= sum(CountTrans))
+dayofthemonthwithdrawals$NumberOfTransactions<-round(dayofthemonthwithdrawals$NumberOfTransactions / 1e6,1)
+ggplot(data=dayofthemonthwithdrawals, aes(x=DayofMonth, y=NumberOfTransactions)) +geom_smooth(color="#428bca")+labs(x= "Day of the Month", y= "Number of Transactions(Mil") + ggtitle("withdrawals")+ theme_light() +theme(text=element_text(size=9,  family="Helvetica"))
+
+
+```
+
+*** 
+
+**Plot of the number of transactions for 2017 for each day of the month, for both withdrawals and deposits.** 
+
+Having an understanding of **when**  customers visit bank tellers to deposit or withdraw money, could explain **why** they preferred visting the bank rather than using an ATM. 
+
+
+- **For deposits**  there are peaks in the first and last 10 days of the month. This could indicate customers who receive their monthly salary in cash and deposit it during this period.
+
+- **For withdrawals** there is a large peak during the last 10 days of the month. This suggests customers who may have cash payments due at the end of the month.
+
+- In order to confirm that customers are mainly using tellers to deposit their monthly pay, next we look at **repeated transaction amounts**.
+
+### **Repeated Transactions**
+```{r fig.width=10,fig.height=4}
+dayrepeated<-read.csv("data/dayrepeated.csv", stringsAsFactors = FALSE, sep=",")
+
+ggplot(
+ data=dayrepeated, aes(x=DayofMonth, y=Sum))+
+  geom_bar(aes (fill=TransactionType),stat="identity")+ facet_wrap(~TransactionType)+ 
+  ylab("Count of Transactions Amounts ")+ xlab("Day of the Month") + 
+  theme_light()+
+  theme(text=element_text(size=9,  family="Helvetica"))+
+  ggtitle("Number of Repeated Transactions Days of the Month")+
+  scale_y_continuous(labels = scales::comma)+
+  scale_fill_manual(values=c("#5cb85c","#428bca"))
+
+
+
+```
+
+***
+**Number of Transactions on specific Days :**
+A look at the number of customers making deposits and withdrawals of the same amount at specific days of the month. This confirms:
+
+-  Peak in deposits at the beginning of the month is mostly customer's depositing their **salaries**.
+
+- The highest repeated deposit is on **day 3** of the month.
+
+- There are high number of repeated withdrawals at the end of the month.
+
+**Next Questions to Look at: **
+
+- Why do customers prefer to deposit their pay at tellers?
+- Are they depositing big amounts and they would rather do this at the teller?
+- Or, do they find using tellers easier than ATM's as they have not adopted to the technology?
+  
+### **Transaction Amounts**
+```{r fig.width=10,fig.height=4}
+ggplot(data=tellerdata, aes(x=DayofMonth, y=abs(AvgTransactionAmt)))+ geom_bar(stat="identity", aes (fill=TransactionType))+ facet_wrap(~TransactionType)+ 
+  ylab("Average Transactions Amounts (R)")+ xlab("Day of the Month") + theme_light()+
+  theme(text=element_text(size=9,  family="Helvetica"))+
+  ggtitle("Transactions Amounts over Days of the Month")+
+  scale_y_continuous(labels = scales::comma)+
+  scale_fill_manual(values=c("#5cb85c","#428bca"))
+
+
+```
+
+***
+
+**Distribution of Transaction amounts**
+
+- Most of the salaries lie between R13,000 and R17,000.
+- There were only two deposits of over R40,000. (One huge deposit?)
+- Next look at customer demographics, to see if this influences their teller behaviour.
+
+
+
+### **Teller & ATM Customer Profiles**
+
+```{r fig.width=11,fig.height=4}
+custdem<-read.csv("data/custdemographics.csv", stringsAsFactors = FALSE)
+custdem$TransactionType<-ifelse(custdem$Transaction=="Cash Withdrawal","Cash Withdrawal",ifelse(custdem$Transaction=="Withdrawal","Cash Withdrawal","All Deposits"))
+##Age
+ggplot(data=custdem, aes(x=AGE, y=NoCust))+ 
+geom_bar(aes(fill=Channel), position="identity",stat="identity") + facet_wrap(~TransactionType)+theme_light()+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+ 
+  ggtitle("Number of Customers per Age Group")+
+  theme(text=element_text(size=9,  family="Helvetica"))+
+  ylab("Number of Customers ")+ xlab("Age Group")+
+scale_fill_manual(values=c("#d9534f","#428bca"))
+
+##Income
+ggplot(
+data=custdem, aes(x=INCOME_GROUP_DESC, y=NoCust))+ 
+geom_bar(aes(fill=Channel), position="dodge",stat="identity") +
+  facet_wrap(~TransactionType)+
+  theme_light()+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+  ggtitle("Number of Customers per Income Group")+
+  theme(text=element_text(size=9,  family="Helvetica"))+  
+  ylab("Number of Customers ")+ xlab("Income Group")+
+  scale_fill_manual(values=c("#d9534f","#428bca"))
+```
+
+***
+**Plots of Customer Demographics**
+
+- In the **age** plot,  ages of around 20 and 40 years prefer using ATM over Teller for deposits. More customers over the age of 45 use tellers. This could suggest older customers more comfortable with using tellers.
+
+
+- Comparing the **income groups** for customers transacting at the ATM VS Teller, for deposits it seems that for all income groups, more customers transact at tellers for ATM. 
+
+### **Teller & ATM Customer's Banking Segments**
+```{r fig.width=10,fig.height=5}
+##Segments
+
+ggplot(
+  data=(custdem %>% filter(Channel=="Teller") %>% group_by(SBU_SEGMENT_DESC, TransactionType) %>%   summarise(NoCust=sum(NoCust))), aes(x=reorder(SBU_SEGMENT_DESC,NoCust), y=NoCust))+
+  geom_point(col="#0392cf", size=4) +   # Draw points
+  geom_segment(aes(x=SBU_SEGMENT_DESC, 
+                   xend=SBU_SEGMENT_DESC, 
+                   y=0, 
+                   yend=NoCust))+
+  facet_wrap(~TransactionType)+theme_few()+
+  coord_flip()+ 
+  ylab("Number of Customers")+
+  xlab("Banking Segment")+
+  theme(text=element_text(size=9,  family="Helvetica"))+
+  scale_y_continuous(labels = scales::comma)#+ 
+
+ggplot(
+data=(custdem %>% filter(Channel=="Teller") %>% group_by(SBU_SUB_SEGMENT_DESC,TransactionType) %>% summarise(NoCust=sum(NoCust))),
+aes(x=reorder(SBU_SUB_SEGMENT_DESC,NoCust), y=NoCust))+
+geom_point(col="#0392cf", size=3) +   # Draw points
+  geom_segment(aes(x=SBU_SUB_SEGMENT_DESC, 
+                   xend=SBU_SUB_SEGMENT_DESC, 
+                   y=0, 
+                   yend=NoCust)
+                   )+ facet_wrap(~TransactionType)+theme_few()+
+  coord_flip()+ ylab("Number of Customers")+ xlab("Banking Sub-Segment")+
+  theme(text=element_text(size=9,  family="Helvetica"))
+```
+
+***
+
+- *Banking Segments* are categories which the bank has decided on based on customers products. 
+
+- The predominent segments using Tellers and ATMS are from the **Retail banking and Entry level banking** segments.
+
+- Looking deeper into the sub-segments,student,inclusive, youth, core middle market and entry level banking are predemoninent. 
+
+- Private banking and business banking have very low numbers of teller visits.
+
+- **It should be noted**, that not all customer information is provided by customers and therefore only the customers whose information was provided were used in these plots.
+
+
+
+### **Where are Customers visting Tellers?**
+
+```{r, echo=F, warning=F}
+tellerlevel<-read.csv("data/tellerlevel.csv",stringsAsFactors = FALSE)
+content <- paste(
+  "<b>","Teller: "," </b>",tellerlevel$Location,"<br/>",
+  "<b>", "Number of Customers: ","</b>", tellerlevel$SumTransactions
+)
+leaflet(tellerlevel) %>%
+  addTiles((urlTemplate = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}')) %>%
+  addCircleMarkers(~lat,~long,
+                   ~sqrt(tellerlevel$SumTransactions)/50,
+                   color ="#f4a644",
+                   stroke = FALSE, fillOpacity = 0.6,
+                   popup= content
+                   )
+```
+
+***
+**Click** on circles to see specific teller information. The size of the circle indicates customer traffic at the particular teller.
+
+**Zoom** in on the map to see specific areas.
+
+### **Conculsion & Future Work**
+**Conclusion from this Analysis**
+
+- Customers mostly use tellers to deposit their monthly pay check.
+- Older customers prefer using tellers, suggesting they familiar and comfortable using tellers and haven't adopted to ATM's yet.
+- Customers from the Entry level banking and Retail banking segments are predominently using Tellers.
+
+In order to give **actionable** insights to the bank, a dashboard should be developed to do the following:
+
+- Give insight into repeated transaction amounts deposited or withdrawn. 
+
+- Identify which tellers are these repeat transactions being done at and which ATM's in the surrounding areas can fulfil these customer requests. 
+
+- If there is a withdrawal or deposit limit at the nearest ATM's, the bank should be aware of this so that they can take action to make these transactions easier for customers.
+
+- The tool should inform the bank which customers prefer tellers over ATM's, so that the appropriate and relevant marketing information about other channels can be shared with the customer.
+
