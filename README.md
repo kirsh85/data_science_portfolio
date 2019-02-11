@@ -10,10 +10,6 @@ More information about me: https://www.linkedin.com/in/kirshnee-bhagwandas-bbb04
 - use of ggmap to geocode loctions and mapping in Leaflet.
 - plotly and ggplot packages used for visualization.
 
-#### [moving bubbles](https://github.com/kirsh85/data_science_portfolio/tree/master/moving_bubbles)
-- D3.js visualization to show movement of customers throughout the day.
-- using Flowing Dats's tutorial on a Day in the Life of an American.
-
 
 #### [webscraping_tripadvisor](https://github.com/kirsh85/data_science_portfolio/tree/master/webscaping_tripadvisor)
 - webscraping app to collect Trip Advisor's hotel data and analyse sentiments of reviews.
