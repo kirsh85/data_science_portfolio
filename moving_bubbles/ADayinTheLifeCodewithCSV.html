@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<head>
+    <title>Moving Bubble Tutorial</title>
+    <meta charset="utf-8">
+     <div id="option">
+    <input name="updateButton" 
+           type="button" 
+           value="START" 
+           onclick="RunScript()" />
+</div>
+</head>
+<style>
+
+h1 {
+  font: 100 50px/50px "Helvetica Neue";
+  text-align: left;
+  width: 1200px;
+  height: 500px;
+  margin: 0;
+  position: absolute;
+}
+
+h2 {
+  font: 50 120px/500px "Helvetica Neue";
+  text-align: center;
+  width: 960px;
+  height: 500px;
+  margin: 0;
+  position: absolute;
+}
+
+h3 {
+  font: 10 120px/500px "Helvetica Neue";
+  text-align: center;
+  width: 960px;
+  height: 500px;
+  margin: 0;
+  position: absolute;
+}
+
+
+</style>
+<h1>Movement of Banking Customers</h1>
+
+
+
+
+<body>   
+
+<div id="main-wrapper">
+ 
+    <div id="chart"></div>
+    
+</div><!-- @end #main-wrapper -->
+
+
+
+
+<script src="d3.min.js"></script>
+<script>
+
+function RunScript() {
+var dataset = []
+d3.csv("data/nodesdata.csv", function(data) {
+   channels = data.map(function(d) { 
+    return{
+    channel: d.channel,
+    index: d.index,
+    time: d.time,
+    proportion: d.proportion,
+    proportiontext: d.proportiontext,
+    proportionzero: d.proportionzero
+    }
+  });
+  
+    
+     
+   console.log(channels)
+});
+
+var margin = {top: 16, right: 0, bottom: 0, left: 0},
+    width = 2000 - margin.left - margin.right,
+    height = 920 - margin.top - margin.bottom;
+
+var svg = d3.select("#chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var node_radius = 4,
+    padding = 1,
+    cluster_padding = 10,
+    num_nodes = 49,
+    max_radius = 5.5,
+    init_radius = 5.5;
+ 
+
+// Foci
+var foci = {
+    "Teller":  { x: 175, y: 300, color: "#29bf10" },
+    "center":   { x: 475, y: 280, color: "#cccccc" },
+    "Internet_Banking":   { x: 775, y: 300, color: "#23cdc7" },
+    "ATM":      { x: 675, y: 500, color: "#5875fd" },
+    "APP":      { x: 275, y: 500, color: "#E63B60" }
+   
+};
+
+
+
+// Create node objects
+var nodes = d3.range(0, num_nodes).map(function(o, i) {
+    return {
+        id: "node" + i,
+        x: foci.center.x + Math.random(),
+        y: foci.center.y + Math.random(),
+        radius: node_radius,
+        choice: "center",
+    }
+});
+
+//Headers
+svg.append("text").attr("class","sub-header")
+.attr("x", foci.Teller.x)
+.attr("y",240)
+.style("font-size", "25px") 
+.attr("text-anchor","middle")
+.text("Teller")
+.style("font-family","Helvetica Neue")
+;
+
+svg.append("text").attr("class","header")
+.style("font-size", "25px") 
+.attr("x", foci.Internet_Banking.x)
+.attr("y",240)
+.attr("text-anchor","middle")
+.text("Internet Banking")
+.style("font-family","Helvetica Neue")
+;
+
+svg.append("text").attr("class","header")
+.style("font-size", "25px") 
+.attr("x", foci.ATM.x)
+.attr("y",440)
+.attr("text-anchor","middle")
+.text("ATM")
+.style("font-family","Helvetica Neue")
+;
+
+svg.append("text").attr("class","header")
+.style("font-size", "25px") 
+.attr("x", foci.APP.x)
+.attr("y",440)
+.attr("text-anchor","middle")
+.text("APP")
+.style("font-family","Helvetica Neue")
+;
+
+svg.append("text").attr("class","sub-head")
+.style("font-size", "16px") 
+.attr("dy", 200)
+.attr("transform","translate("+foci.center.x+",3)")
+.attr("text-anchor","middle")
+.style("font-family","Helvetica Neue")
+.style('fill',"grey")
+.text("ALL CUSTOMERS")
+
+;
+
+
+//Counters
+svg.append("text")
+.attr("id", "Tellercounter")
+.attr("class","Tellercounter")
+.attr("data-choice","Teller")
+.style("font-size", "20px") 
+.attr("x",foci.Teller.x)
+.attr("y",260)
+.attr("text-anchor","middle")
+.style("font-family","Helvetica Neue")
+.text("0%")
+;
+
+svg.append("text")
+.attr("id", "Internet_Bankingcounter")
+.attr("class","Internet_Bankingcounter")
+.attr("data-choice","Internet_Banking")
+.attr("x",foci.Internet_Banking.x)
+.attr("y",260)
+.style("font-size", "20px") 
+.attr("text-anchor","middle")
+.text("0%")
+.style("font-family","Helvetica Neue")
+;
+
+svg.append("text")
+.attr("id", "APPcounter")
+.attr("class","APPcounter")
+.attr("data-choice","APP")
+.attr("x",foci.APP.x)
+.attr("y",460)
+.style("font-size", "20px") 
+.attr("text-anchor","middle")
+.text("0%")
+.style("font-family","Helvetica Neue")
+;
+
+
+svg.append("text")
+.attr("id", "ATMcounter")
+.attr("class","ATMcounter")
+.attr("data-choice","ATM")
+.attr("x",foci.ATM.x)
+.attr("y",460)
+.style("font-size", "20px") 
+.attr("text-anchor","middle")
+.text("0%")
+.style("font-family","Helvetica Neue")
+;
+
+svg.append("text")
+.attr("id", "yearcounter")
+.attr("class","timecounter")
+.attr("data-choice","middle")
+.attr("x",foci.center.x)
+.attr("y",160)
+.style("font-family","Roboto")
+.style('fill',"darkgrey")
+.style("font-size", "60px") 
+.attr("text-anchor","middle")
+.text("12:00am")
+
+;
+
+
+// Force-directed layout
+var force = d3.layout.force()
+    .nodes(nodes)
+    .size([width, height])
+    .gravity(0)
+    .charge(0)
+    .friction(.91)
+    .on("tick", tick)
+    .start();
+
+// Draw circle for each node.
+var circle = svg.selectAll("circle")
+    .data(nodes)
+    .enter().append("circle")
+    .attr("id", function(d) { return d.id; })
+    .attr("class", "node")
+    .style("fill", function(d) { return foci[d.choice].color; }); 
+
+
+
+// For smoother initial transition to settling spots.
+circle.transition()
+    .duration(900)
+    .delay(function(d,i) { return i * 5; })
+    .attrTween("r", function(d) {
+        var i = d3.interpolate(0, d.radius);
+        return function(t) { return d.radius = i(t); };
+    });
+function tick(e) {
+  circle
+    .each(gravity(.051 * e.alpha))
+    .each(collide(.4))
+    .style("fill", function(d) { return foci[d.choice].color; })
+    .attr("cx", function(d) { return d.x; })
+    .attr("cy", function(d) { return d.y; });
+}
+// Move nodes toward cluster focus.
+function gravity(alpha) {
+  return function(d) {
+    d.y += (foci[d.choice].y - d.y) * alpha;
+    d.x += (foci[d.choice].x - d.x) * alpha;
+  };
+}
+
+// Resolve collisions between nodes.
+function collide(alpha) {
+  var quadtree = d3.geom.quadtree(nodes);
+  return function(d) {
+      var r = d.radius + node_radius + Math.max(padding, cluster_padding),
+        nx1 = d.x - r,
+        nx2 = d.x + r,
+        ny1 = d.y - r,
+        ny2 = d.y + r;
+    quadtree.visit(function(quad, x1, y1, x2, y2) {
+      if (quad.point && (quad.point !== d)) {
+        var x = d.x - quad.point.x,
+            y = d.y - quad.point.y,
+            l = Math.sqrt(x * x + y * y),
+            r = d.radius + quad.point.radius + (d.choice === quad.point.choice ? padding : cluster_padding);
+        if (l < r) {
+          l = (l - r) / l * alpha;
+          d.x -= x *= l;
+          d.y -= y *= l;
+          quad.point.x += x;
+          quad.point.y += y;
+        }
+      }
+      return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+    });
+  };
+}
+
+
+// Simulate and update counts.
+//
+var curr_node_index = 0;
+var reset = false;
+var Teller_so_far = 0;
+var Internet_Banking_so_far = 0;
+var ATM_so_far = 0;
+var timeout;
+var USER_SPEED = 300;
+var curr_minute = 0;
+var proportion_node=0;
+var choice = 0;
+var time_index = 0;
+var curr_node_move = 1;
+var index = 0;
+// Run function periodically to make things move.
+
+function timer() {
+if (channels.length>0) {
+  if(time_index==channels[curr_node_index].time){
+  
+  if (proportion_node<channels[curr_node_index].proportionzero*20){
+    choice=channels[curr_node_index].channel
+    
+    // Update random node
+  //  var random_index = Math.floor( Math.random() * nodes.length );
+    nodes[curr_node_move].cx = foci[choice].x;
+    nodes[curr_node_move].cy = foci[choice].y;
+    nodes[curr_node_move].choice = choice;
+    
+    proportion_node +=1;
+    curr_node_move +=1;
+     
+ 
+  
+     
+  // index=curr_node_move;
+      
+     
+  
+    force.resume();
+     
+
+ if (USER_SPEED > 0) {
+      timeout = setTimeout(timer, 100);
+    }
+   
+    }
+    else{
+      
+      proportion_node=0;
+      curr_node_index +=1;
+      index +=1;
+      
+ if (USER_SPEED > 0) {
+      timeout = setTimeout(timer, 100);
+    }
+}
+}
+else{
+   
+      curr_minute += 1;
+      time_index +=1;
+        d3.selectAll("text.timecounter")
+        .text(HoursToTime(curr_minute));
+        index +=1;
+       // index=curr_node_move;
+  
+  d3.selectAll("text.Tellercounter")
+          .data(channels.filter(function(d){ return d.channel=="Teller" && d.time==curr_minute}))
+          //.data(channel_codes)
+          .text(function(d){ return d.proportiontext + "%"});
+       
+     
+  d3.selectAll("text.ATMcounter")
+          .data(channels.filter(function(d){ return d.channel=="ATM" && d.time==curr_minute}))
+          //.data(channel_codes)
+          .text(function(d){ return d.proportiontext + "%"});
+       
+     
+  d3.selectAll("text.Internet_Bankingcounter")
+          .data(channels.filter(function(d){ return d.channel=="Internet_Banking" && d.time==curr_minute}))
+          //.data(channel_codes)
+          .text(function(d){ return d.proportiontext + "%"});
+
+     d3.selectAll("text.APPcounter")
+          .data(channels.filter(function(d){ return d.channel=="APP" && d.time==curr_minute}))
+          //.data(channel_codes)
+          .text(function(d){ return d.proportiontext + "%"});    
+
+ if (USER_SPEED > 0) {
+   // proportion_node +=1;
+      timeout = setTimeout(timer, 100);
+    }
+
+}
+     
+
+}
+
+
+
+}
+timeout = setTimeout(timer, 80);
+
+
+// Transition Text
+function HoursToTime(hh) {
+    force.resume();
+  var ampm;
+  if (hh > 12) {
+    hh = hh - 12;
+    ampm = "pm";
+  } else if (hh == 12) {
+    ampm = "pm";
+  } else if (hh == 0) {
+    hh = 12;
+    ampm = "am";
+  } else {
+
+    ampm = "am";
+  }
+
+  
+  
+  return hh + ":" + "00" + ampm
+}
+}
+
+</script>
