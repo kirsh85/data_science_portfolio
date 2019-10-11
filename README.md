@@ -16,9 +16,9 @@ More information about me: https://www.linkedin.com/in/kirshnee-bhagwandas-bbb04
 - use of Scrapy in python to develop spider, R to clean and perform sentiment analysis together with RShiny for app and visualization.
 
 #### [moving_bubbles](https://github.com/kirsh85/data_science_portfolio/tree/master/moving_bubbles)
-- Using Nathan Yau's 'Day in the life of an American' tutorial to create clusters moving in D3.js 
+- Using Nathan Yau's Day in the life of an American' tutorial to create clusters moving in D3.js 
 - Data wrangling was done in R and then the cleaned data transferred to D3.
 - I created the nodes to move in groups at time intervals to various positions.
 
 ##### Outlier Detection
-- [ssolation forest example](https://github.com/kirsh85/data_science_portfolio/tree/master/outlier_detection/)
+- [Isolation forest example](https://github.com/kirsh85/data_science_portfolio/tree/master/outlier_detection/outliers_isolation_forest.ipynb)
