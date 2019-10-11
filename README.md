@@ -19,3 +19,6 @@ More information about me: https://www.linkedin.com/in/kirshnee-bhagwandas-bbb04
 - Using Nathan Yau's 'Day in the life of an American' tutorial to create clusters moving in D3.js 
 - Data wrangling was done in R and then the cleaned data transferred to D3.
 - I created the nodes to move in groups at time intervals to various positions.
+
+##### Outlier Detection
+- [ssolation forest example](https://github.com/kirsh85/data_science_portfolio/tree/master/outlier_detection/)
