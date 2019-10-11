@@ -20,5 +20,5 @@ More information about me: https://www.linkedin.com/in/kirshnee-bhagwandas-bbb04
 - Data wrangling was done in R and then the cleaned data transferred to D3.
 - I created the nodes to move in groups at time intervals to various positions.
 
-##### Outlier Detection
+#### [Outlier Detection](https://github.com/kirsh85/data_science_portfolio/tree/master/outlier_detection/outliers_isolation_forest.ipynb)
 - [Isolation forest example](https://github.com/kirsh85/data_science_portfolio/tree/master/outlier_detection/outliers_isolation_forest.ipynb)
